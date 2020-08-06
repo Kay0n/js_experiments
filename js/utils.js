@@ -1,9 +1,13 @@
+/*
+import('./utils.js').then((module) => {
+    coords = module.coords
+    drawText = module.drawText
+    ellipseCollide = module.ellipseCollide
+});
+*/
 
 
-
-
-
-export function drawText(string,x,y,size){
+export function drawText(string,x,y,size){   //use <color> to change color in string
     var pos_x = x
     var stringArray = string.split(/[<>]/);
     if (size != undefined){
@@ -37,9 +41,8 @@ export function coords(){
 }
 
 
-export function collideCheck(x1,y1,r1,x2,y2,r2){
+export function ellipseCollide(x1,y1,r1,x2,y2,r2){
     var distance = dist(x1,y1,x2,y2);
-
     if (distance < (r1 | r2)){
         return true
     } 
