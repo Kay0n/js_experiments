@@ -2,7 +2,6 @@
 import('./utils.js').then((module) => {
     coords = module.coords
     drawText = module.drawText
-    ellipseCollide = module.ellipseCollide
 });
 */
 
@@ -41,16 +40,8 @@ export function coords(){
 }
 
 
-export function ellipseCollide(x1,y1,r1,x2,y2,r2){
-    var distance = dist(x1,y1,x2,y2);
-    if (distance < (r1 | r2)){
-        return true
-    } 
-    else {
-        return false
-    }
-    //do something
-}
+
+
 
 
 
