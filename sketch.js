@@ -1,33 +1,44 @@
-var input, button, greeting;
-
-function setup() {
-  // create canvas
-  createCanvas(710, 400);
-
-  input = createInput();
-  input.position(20, 65);
-
-  button = createButton('submit');
-  button.position(input.x + input.width, 65);
-  button.mousePressed(greet);
-
-  greeting = createElement('h2', 'what is your name?');
-  greeting.position(20, 5);
-
-  textAlign(CENTER);
-  textSize(50);
+function setup(){
+  createCanvas(600,800)
+  player = new player()
 }
-function greet() {
-  var name = input.value();
-  greeting.html('hello ' + name + '!');
-  input.value('');
 
-  for (let i = 0; i < 200; i++) {
-    push();
-    fill(random(255), 255, 255);
-    translate(random(width), random(height));
-    rotate(random(2 * PI));
-    text(name, 0, 0);
-    pop();
-  }
+function draw(){
+  background("#4d4d4d")
+  graphics()
+  player.move()
+  player.display()
+
+  
+  
+}
+
+
+
+
+function keyPressed(){
+  if (keyCode == 65){player.lane -= 1}
+  if (keyCode == 68){player.lane += 1}
+  print(player.lane)
+
+}
+
+
+function graphics(){
+  push()
+
+  // lane lines
+  stroke("#8f8f8f")
+  strokeWeight(5) 
+  line(200,0,200,800)
+  line(400,0,400,800)
+  
+  // top box
+  strokeWeight(4)
+  stroke("black")
+  fill("white")
+  rect(0,0,600,50)
+
+
+  pop()
 }
