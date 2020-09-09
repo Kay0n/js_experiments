@@ -1,5 +1,10 @@
+var canvasHeight = 700
+var canvasWidth = 600
+var enemyArray = []
+
+
 function setup(){
-  createCanvas(600,800)
+  createCanvas(canvasWidth,canvasHeight)
   player = new player()
 }
 
@@ -8,19 +13,25 @@ function draw(){
   graphics()
   player.move()
   player.display()
-
-  
-  
+  for (var i = 0;i < enemyArray.length;i++){
+    enemyArray[i].move()
+    enemyArray[i].display()
+    if (enemyArray[i].death == true){
+      enemyArray[i].splice(i,1)
+    }
+  }
 }
-
-
 
 
 function keyPressed(){
   if (keyCode == 65){player.lane -= 1}
   if (keyCode == 68){player.lane += 1}
-  print(player.lane)
 
+  if (keyCode == 32){
+    enemy = new wall()
+    enemyArray.push(enemy)
+    print(enemyArray.length)
+  }
 }
 
 
@@ -30,8 +41,8 @@ function graphics(){
   // lane lines
   stroke("#8f8f8f")
   strokeWeight(5) 
-  line(200,0,200,800)
-  line(400,0,400,800)
+  line(200,0,200,canvasHeight)
+  line(400,0,400,canvasHeight)
   
   // top box
   strokeWeight(4)
