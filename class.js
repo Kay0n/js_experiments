@@ -23,18 +23,24 @@ class player{
 
 
 class wall{
-    constructor(){
+    constructor(x,phase){
+        this.group
         this.lane = int(random(0,3))
         this.width = 193
         this.height = 30
-        this.x = (3+this.lane*200)
+        this.x = x
         this.y = 0
+        this.phase = phase
         this.death = false
     }
     display(){
         strokeWeight(4)
         fill("red")
+        if (this.phase == true){
+            fill("blue")
+        }
         rect(this.x,this.y,this.width,this.height)
+
     }
     move(speed){
         this.y += speed
