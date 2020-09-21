@@ -6,31 +6,13 @@ var time = 0
 var multiplier = 1
 var gameState = 0 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
 var tempArray = []
+var num = 0
+var enemyPhase
 
 function setup(){
   createCanvas(600,700)
   player = new player()
   playButton = rect(28,220,155,38)
-  font = loadFont('./Fira.ttf');
-
-
-}
-
-
-function buttonAdd(x,y,w,h){
-  fill(color)
-  obj = rect(x,y,w,h);
-
-
-  // Attach a callback function called overpara to the p element's mouseOver event
-  fill(obj.mouseOver(isSlelected(true)))
-
-  // Attach a callback function called outpara to the p element's mouseOut event
-  fill(obj.mouseOut(isSlelected(false)))
-}
-
-function isSelected(bool){
-
 }
 
 
@@ -44,8 +26,8 @@ function draw(){
 
 
 
-
 function game(){
+
   // draws background
   gameBackground()
 
@@ -53,26 +35,25 @@ function game(){
   player.move()
   player.display()
 
-  
-  //render and move enemy objects
+  // render and move enemy objects
   for (var i = 0;i < enemyArray.length;i++){
     enemyArray[i].move(speed)
     enemyArray[i].display()
+
+    // splice enemy if out of canvas
     if (enemyArray[i].death == true){
       enemyArray.splice(i,1)
       continue
     }
-    if (collideRectCircle(enemyArray[i].x, enemyArray[i].y, enemyArray[i].width, enemyArray[i].height, player.x,player.y,player.radius)){
-      if (enemyArray[i].phase == true){
 
-      }else{
+    // check for collision with player
+    if (collideRectCircle(enemyArray[i].x, enemyArray[i].y, enemyArray[i].width, enemyArray[i].height, player.x,player.y,player.radius)){
+      if (enemyArray[i].phase != true){
         enemyArray = []
         gameState = 3
       }
-      
     }
   }
-  // draws score box
   scoreBox()
   //score ticking
   score += multiplier
@@ -80,22 +61,19 @@ function game(){
 
 
 
-
+// main menu code
 function menu(){
   background("#888888")
 
   // select box highliting
-  
   fill("white")
   if (collidePointRect(mouseX, mouseY, 28, 220, 155, 38)) {fill("white")}
   else{fill("#888888")}
   rect(28,220,155,38)
-
   if (collidePointRect(mouseX, mouseY, 28, 271, 112, 38)){fill("white")}
   else{fill("#888888")}
   rect(28,271,112,38)
   
-
   // menu text
   strokeWeight(1)
   textSize(30)
@@ -109,7 +87,7 @@ function menu(){
 
 
   
-  
+// game over state
 function gameOver(){
   background("grey")
   push()
@@ -123,34 +101,27 @@ function gameOver(){
 
 
 
-// movement detection
+// keypress detection
 function keyPressed(){
-  if (gameState == 0){
-    if (keyCode == 87 | keyCode == 83){
-      if (selectedOption == 1){selectedOption = 0}
-      else{selectedOption = 1}
-    }
-  }
-  else if (gameState == 2){
+  // player movement
+  if (gameState == 2){ 
     if (keyCode == 65 && player.lane > 0){player.lane -= 1} // A
     if (keyCode == 68&& player.lane < 2){player.lane += 1} // D
   }
+
+  // code for spawning of enemy objects
   if (keyCode == 32){
 
-
-    var group = int(random(0,3))
-    print(group)
+    // unlinks array objects
     tempArray = JSON.parse(JSON.stringify(enemyXArray))
-    var enemyPhase = false
-
-    for (var i = 0;i<=group;i++){
+    
+    // rand number of enemys; loops through temp array to set position & phase
+    enemyPhase = false
+    for (var i = 0;i<=int(random(0,3));i++){
       if (tempArray.length == 1){
         enemyPhase = true
       }
-
-      var num = int(random(0,tempArray.length))
-      
-    
+      num = int(random(0,tempArray.length))
       enemy = new wall(tempArray[num],enemyPhase)
       enemyArray.push(enemy)
       tempArray.splice(num,1)
@@ -159,7 +130,7 @@ function keyPressed(){
 }
 
 
-
+// background lanes and colors
 function gameBackground(){
   push()
   background("#4d4d4d")
@@ -185,11 +156,11 @@ function scoreBox(){
   fill("white")
   rect(0,0,600,50)
 
-
   //score
   strokeWeight(1)
   textSize(20)
   fill("black")
+
   //dynamicly adjusts score to stay on screen
   var scoreX = score.toString().length * 10
   text("Score: "+score, 520-scoreX,32)
@@ -197,19 +168,11 @@ function scoreBox(){
 }
 
 
-var testArray = [100,300,500]
-var temp = []
+//just for testing
 function testing(){
-  temp = JSON.parse(JSON.stringify(testArray));
-  
-  temp.splice(0,1)
-  print("temp - " + temp)
-  print("testarray - " + testArray)
-  
-
 }
 
-
+// menu button click detection
 function mouseClicked() {
   if (gameState == 0){
     if (collidePointRect(mouseX, mouseY, 28, 220, 155, 38)) {gameState = 2}
