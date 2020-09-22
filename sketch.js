@@ -4,11 +4,11 @@ var speed = 5
 var score = 0
 var time = 0
 var multiplier = 1
-var gameState = 0 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
+var gameState = 4 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
 var tempArray = []
 var num = 0
 var enemyPhase
-var distance = 0
+var highScore
 
 function setup(){
   createCanvas(600,750)
@@ -28,7 +28,7 @@ function draw(){
 
 
 function game(){
-  speed += 1/1000
+  speed += 1/900
   if (enemyArray.length == 0){
     createEnemy()
   }
@@ -134,7 +134,7 @@ function createEnemy(){
   // rand number of enemys; loops through temp array to set position & phase
 
   enemyPhase = "#9c9c9c"
-  if (frameCount > 5000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
+  if (frameCount > 4000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
   
   // rand number of enemys; loops through temp array to set position & phase
   for (var i = 0;i<=tempNum;i++){
@@ -178,7 +178,20 @@ function scoreBox(){
 // just for testing
 function testing(){
   
+  background("grey")
+  textBG("Play Game",100,100,"white","black",30,3)
+  
 
+}
+
+function textBG(string,x,y,color1,color2,size,buffer){
+  textSize(size)
+  if(collidePointRect(mouseX,mouseY,x,y-size,textWidth(string),size)){
+    fill(color2)
+    text(string,x+buffer,y+buffer)
+  }
+  fill(color1)
+  text(string,x,y)
 }
 
 // menu button click detection
