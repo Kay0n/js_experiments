@@ -4,11 +4,12 @@ var speed = 5
 var score = 0
 var time = 0
 var multiplier = 1
-var gameState = 4 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
+var gameState = 0 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
 var tempArray = []
 var num = 0
 var enemyPhase
 var highScore
+var deathFadeAlpha = 0
 
 function setup(){
   createCanvas(600,750)
@@ -21,14 +22,22 @@ function setup(){
 function draw(){
   if (gameState == 0){menu()}
   else if (gameState == 2){game()}
+  else if (gameState == 4){pause()}
   else if (gameState == 3){gameOver()}
-  else if (gameState == 4){testing()}
 }
 
-
+// give up
+var urlVar = false
+function url(){
+  if (urlVar == false){
+    urlVar = true
+    window.location.replace('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+  }
+}
 
 function game(){
-  speed += 1/900
+  print(playButton)
+  //one bar at all times
   if (enemyArray.length == 0){
     createEnemy()
   }
@@ -57,61 +66,67 @@ function game(){
       continue
     }
 
-    // check for collision with player
+    // check for collision with player; end game
     if (collideRectCircle(enemyArray[i].x, enemyArray[i].y, enemyArray[i].width, enemyArray[i].height, player.x,player.y,player.radius)){
       if (enemyArray[i].phase != player.phase){
         enemyArray = []
+        deathFadeAlpha = 0  
         gameState = 3
       }
     }
   }
   scoreBox()
-  //score ticking
+  //ticking
+  speed += 1/800
   score += multiplier
 }
 
 
 
+
+
+
 // main menu code
 function menu(){
-  background("#888888")
+  background(10,10,10)
 
-  // select box highliting
-  fill("white")
-  if (collidePointRect(mouseX, mouseY, 28, 220, 155, 38)) {fill("white")}
-  else{fill("#888888")}
-  rect(28,220,155,38)
-  if (collidePointRect(mouseX, mouseY, 28, 271, 112, 38)){fill("white")}
-  else{fill("#888888")}
-  rect(28,271,112,38)
-  
-  // menu text
-  strokeWeight(1)
-  textSize(30)
-  fill("black")
-  text("Play Game",30,250)
-  text("Options",30,300)
-  }
+  playButton = textBG("Play Game",30,250,"white","#333333",30,4)
+  optionsButton = textBG("Options",30,300,"white","#333333",30,4)
 
+}
  
   
+
+
+
+
+
 // game over state
+
 function gameOver(){
-  background("grey")
-  push()
+  if (deathFadeAlpha < 255){
+    deathFadeAlpha += 1
+    fill(10,10,10,deathFadeAlpha)
+    rect(0,0,width,height)
+  }else{
+    background(10,10,10)
+  }
+  fill("white")
   textAlign(CENTER)
-  rectMode(CENTER)
-  textSize(60)
-  fill("black")
+  textSize(80)
   text("Game Over",300,100)
-  pop()
+  textSize(30)
+  text("Score: " + score, 300,140)
+
 }
+
 
 
 
 // keypress detection
 function keyPressed(){
   // player movement
+  if (keyCode == 27){gameState = 4}
   if (gameState == 2){ 
     if (keyCode == 65 && player.lane > 0){player.lane -= 1} // A
     if (keyCode == 68 && player.lane < 2){player.lane += 1} // D
@@ -124,6 +139,7 @@ function keyPressed(){
 
     }
   }
+  
 }
 
 
@@ -131,10 +147,9 @@ function createEnemy(){
   // unlinks array objects
   tempArray = JSON.parse(JSON.stringify(enemyXArray))
   
-  // rand number of enemys; loops through temp array to set position & phase
-
+  // set phase
   enemyPhase = "#9c9c9c"
-  if (frameCount > 4000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
+  if (frameCount > 3000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
   
   // rand number of enemys; loops through temp array to set position & phase
   for (var i = 0;i<=tempNum;i++){
@@ -178,26 +193,28 @@ function scoreBox(){
 // just for testing
 function testing(){
   
-  background("grey")
-  textBG("Play Game",100,100,"white","black",30,3)
-  
 
 }
 
+// 3D text button function
 function textBG(string,x,y,color1,color2,size,buffer){
   textSize(size)
+  var collide = false
   if(collidePointRect(mouseX,mouseY,x,y-size,textWidth(string),size)){
     fill(color2)
     text(string,x+buffer,y+buffer)
+    collide = true
   }
   fill(color1)
   text(string,x,y)
+  return collide
 }
 
 // menu button click detection
 function mouseClicked() {
   if (gameState == 0){
-    if (collidePointRect(mouseX, mouseY, 28, 220, 155, 38)) {gameState = 2}
+    if (playButton) {gameState = 2}
+    else if (optionsButton) {gameState = 1}
   }
 }
 
