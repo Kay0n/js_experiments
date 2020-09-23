@@ -2,14 +2,15 @@ var enemyArray = []
 var enemyXArray = [-3,197,397]
 var speed = 5
 var score = 0
-var time = 0
+var gameTime = 0
 var multiplier = 1
-var gameState = 0 // 0:menu, 1:options, 2:game, 3:gameover, 4:test
+var gameState = 0 // 0:menu, 1:options, 2:game, 3:gameover, 4:pause
 var tempArray = []
 var num = 0
 var enemyPhase
 var highScore
 var deathFadeAlpha = 0
+var prevState = 0
 
 function setup(){
   createCanvas(600,750)
@@ -17,12 +18,32 @@ function setup(){
   playButton = rect(28,220,155,38)
 }
 
+function executeStateSwitch(){
+  if (gameState != prevState && prevState != 4){
+    if (gameState == 0){
+    }
+    else if (gameState == 1){
+    }
+    else if (gameState == 2){
+      gameTime = 1
+      score = 0
+      speed = 5
+      multiplier = 1
+    }
+    else if (gameState == 3){
+    }
+    else if (gameState == 4){
+      fill(10,10,10,100)
+      rect(0,0,width,height)
+    }
+  }
+  prevState = gameState
+}
 
 
 function draw(){
   if (gameState == 0){menu()}
   else if (gameState == 2){game()}
-  else if (gameState == 4){pause()}
   else if (gameState == 3){gameOver()}
 }
 
@@ -36,7 +57,6 @@ function url(){
 }
 
 function game(){
-  print(playButton)
   //one bar at all times
   if (enemyArray.length == 0){
     createEnemy()
@@ -53,6 +73,8 @@ function game(){
   // player movement and display methods
   player.move()
   player.display()
+
+  powerExecute()
 
   // render and move enemy objects
   for (var i = 0;i < enemyArray.length;i++){
@@ -72,6 +94,7 @@ function game(){
         enemyArray = []
         deathFadeAlpha = 0  
         gameState = 3
+        executeStateSwitch()
       }
     }
   }
@@ -79,6 +102,7 @@ function game(){
   //ticking
   speed += 1/800
   score += multiplier
+  gameTime += 1
 }
 
 
@@ -90,14 +114,11 @@ function game(){
 function menu(){
   background(10,10,10)
 
-  playButton = textBG("Play Game",30,250,"white","#333333",30,4)
-  optionsButton = textBG("Options",30,300,"white","#333333",30,4)
+  playButton = textBG("Play Game",30,250,"white","#444444",30,4)
+  optionsButton = textBG("Options",30,300,"white","#444444",30,4)
 
 }
  
-  
-
-
 
 
 
@@ -117,30 +138,114 @@ function gameOver(){
   text("Game Over",300,100)
   textSize(30)
   text("Score: " + score, 300,140)
+  
+  menuButton = textBG("Main Menu",300,250,"white","#444444",30,4)
+  replayButton = textBG("Play Again",300,300,"white","#444444",30,4)
+  textAlign(LEFT)
+} 
 
-}
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 // keypress detection
 function keyPressed(){
-  // player movement
-  if (keyCode == 27){gameState = 4}
-  if (gameState == 2){ 
-    if (keyCode == 65 && player.lane > 0){player.lane -= 1} // A
-    if (keyCode == 68 && player.lane < 2){player.lane += 1} // D
-    if (keyCode == 32|| keyCode == 87 || keyCode == 83){
+  // player movement and pause
+  if (gameState == 4){
+    if (keyCode == 27){
+      gameState = 2
+      executeStateSwitch()
+    }
+
+  }
+
+
+  else if (gameState == 2){ 
+    if (keyCode == 27){
+      gameState = 4
+      executeStateSwitch()
+    }
+    if (keyCode == 65 && player.lane > 0){setTimeout(eval,reactTime,"player.lane -= 1")} // A
+    if (keyCode == 68 && player.lane < 2){setTimeout(eval,reactTime,"player.lane += 1")} // D
+    if (keyCode == 32|| keyCode == 87 || keyCode == 83){ //phase keys [space,w,s]
       if(player.phase == "red"){
         player.phase = "blue"
       } else{
         player.phase = "red"
       }
-
     }
   }
   
 }
+
+
+
+
+
+var activePower = 0
+var reactTime = 0
+
+
+function powerExecute(){
+  // spawns a new powerup every 10 seconds
+  if (gameTime % 1000 == 0){
+    powerRoll = int(random(1,3))
+    activePower = new powerUp(powerRoll)
+    print("powerup Spanwed")
+  }
+  // executes if a powerup exists
+  if (activePower != 0){
+    print("tick")
+
+    //moves and displays powerup
+    activePower.display()
+    activePower.move(speed)
+    // removes if below canvas
+    if (activePower.death == true){
+      activePower = 0
+      print("death")
+    }
+    // if player collides with powerup, remove and run effect
+    else if (collideCircleCircle(activePower.x, activePower.y, activePower.radius, player.x,player.y,player.radius)){
+        print("collected")
+        print(activePower.type)
+        switch (activePower.type){
+          case 1: // reaction powerdown
+            reactTime = 200
+            setTimeout(eval,8000,"reactTime = 0")
+          case 2: // speed slow down
+            speed = speed/1.5
+          case 3: // multiplier
+            multiplier += 1
+
+        }
+        activePower = 0
+    }
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 function createEnemy(){
@@ -149,7 +254,7 @@ function createEnemy(){
   
   // set phase
   enemyPhase = "#9c9c9c"
-  if (frameCount > 3000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
+  if (gameTime > 3000){tempNum = int(random(0,3))}else{tempNum = int(random(0,2))}
   
   // rand number of enemys; loops through temp array to set position & phase
   for (var i = 0;i<=tempNum;i++){
@@ -199,6 +304,7 @@ function testing(){
 // 3D text button function
 function textBG(string,x,y,color1,color2,size,buffer){
   textSize(size)
+  // checks to see if mouse is over text; draws seccond text behind to give 3d effect
   var collide = false
   if(collidePointRect(mouseX,mouseY,x,y-size,textWidth(string),size)){
     fill(color2)
@@ -207,6 +313,7 @@ function textBG(string,x,y,color1,color2,size,buffer){
   }
   fill(color1)
   text(string,x,y)
+  //returns true if mouse is over text, can be used for mouseClick events
   return collide
 }
 
@@ -216,10 +323,9 @@ function mouseClicked() {
     if (playButton) {gameState = 2}
     else if (optionsButton) {gameState = 1}
   }
+  else if (gameState == 3){
+    if (replayButton) {gameState = 2}
+    else if (menuButton) {gameState = 0}
+  }
+  executeStateSwitch()
 }
-
-
-
-
-
-
