@@ -7,6 +7,7 @@ class player{
         this.y = height - 100
         this.x = 0
         this.phase = "white"
+        this.reinforce = false
     }
     move(){
         // sets x-coord based off lane array
@@ -16,6 +17,9 @@ class player{
     display(){
         fill("black")
         stroke("grey")
+        if(this.reinforce == true){
+            stroke("cyan")
+        }
         strokeWeight(2)
         ellipse(this.x,this.y,this.radius)
         strokeWeight(0)
@@ -58,15 +62,20 @@ class wall{
 
 
 class powerUp{
-    constructor(roll){
-        this.radius = 60
+    constructor(roll,lane){
+        this.radius = 30
         this.type = roll
+        if (roll < 6){
+            this.border = "gold"
+        } else {this.border = "red"}
         this.laneList = [100,300,500]
-        this.x = this.laneList[int(random(0,2))]
-        this.y = 0
+        this.x = lane + 100
+        this.y = 25
         this.death = false
     }
     display(){
+        strokeWeight(1)
+        stroke(this.border)
         fill("white")
         ellipse(this.x,this.y,this.radius)
     }

@@ -12,7 +12,6 @@ export function drawText(string,x,y,size){   //use <color> to change color in st
     if (size != undefined){
         textSize(size)
     }
-    
     for(var i=0; i<stringArray.length; i++){      
         if(i % 2 != 0){
             fill(stringArray[i])
