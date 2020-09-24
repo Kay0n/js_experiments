@@ -7,6 +7,7 @@ var gameTime = 0;
 var highScore = 0;
 const phaseTime = 3500; // time until phase bars appear
 
+
 // enemy vars
 var enemyArray = [];
 var enemyXArray = [-3, 197, 397];
@@ -40,6 +41,11 @@ function setup() {
   createCanvas(600, 750);
   player = new player();
   playButton = rect(28, 220, 155, 38);
+  // fetch highScore from browser cookie
+  highScore = getItem('highScore');
+  if (highScore == null){
+    highScore = 0
+  } 
 }
 // draw func
 function draw() {
@@ -137,7 +143,7 @@ function menu() {
   text("Phase Shift", 90, 100);
   fill("white");
   textSize(30);
-  text("HighScore: " + score, 30, 500);
+  text("HighScore: " + highScore, 30, 500);
 }
 
 // tutorial
@@ -456,8 +462,10 @@ function executeStateSwitch() {
       fill("black");
       triangle(10, 10, 40, 25, 10, 40);
     } else if (gameState == 0) {
+      // set highScore and save to cookie
       if (highScore < score) {
         highScore = score;
+        storeItem('highScore', highScore)
       }
     }
   }
