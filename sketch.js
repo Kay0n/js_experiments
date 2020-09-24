@@ -152,14 +152,14 @@ function tutorial() {
   text("Powerups", 150, 520);
   textSize(20);
   text(
-    "Use W and A to move your player across three lanes. Use SPACE to change Phase and ESC to pause",
+    "Use A and D to move your player across three lanes. Use SPACE to change Phase and ESC to pause",
     4,
     80,
     300,
     200
   );
   text(
-    "If you get far enough, you may encounter colored obstacles. Switch your phase to match in order to pass through.",
+    "If you get far enough, you may encounter colored barriers. Switch your phase to match in order to pass through.",
     280,
     320,
     300,
@@ -293,7 +293,7 @@ function powerExecute() {
           break;
         case 5: // multiphase [10s]
           player.phase = "purple";
-          setTimeout(eval, 10000, "player.phase = 'white'");
+          setTimeout(eval, 10000, "player.phase = 'blue'");
           break;
         case 6: // slower reaction [8s]
           reactTime = 200;
