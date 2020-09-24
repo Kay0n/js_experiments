@@ -1,12 +1,11 @@
 // game vars
 var multiplier = 1;
 var gameState = 0; // 0:menu, 1:tutorial, 2:game, 3:gameover, 4:pause
-var speed = 5;
+var speed = 7;
 var score = 0;
 var gameTime = 0;
 var highScore = 0;
 const phaseTime = 3500; // time until phase bars appear
-
 
 // enemy vars
 var enemyArray = [];
@@ -42,11 +41,12 @@ function setup() {
   player = new player();
   playButton = rect(28, 220, 155, 38);
   // fetch highScore from browser cookie
-  highScore = getItem('highScore');
-  if (highScore == null){
-    highScore = 0
-  } 
+  highScore = getItem("highScore");
+  if (highScore == null) {
+    highScore = 0;
+  }
 }
+
 // draw func
 function draw() {
   if (gameState == 0) {
@@ -105,15 +105,19 @@ function game() {
     ) {
       // checks for phase match
       if (enemyArray[i].phase != player.phase) {
-        if (player.reinforce == true) {
-          enemyArray.splice(i, 1);
-          player.reinforce = false;
-        } else if (player.phase != "purple") {
+        
+        if (player.phase != "purple" || enemyArray[i].phase == "#9c9c9c") {
+          if (player.reinforce == true) {
+            enemyArray.splice(i, 1);
+            player.reinforce = false;
+          } else {
           enemyArray = [];
           deathFadeAlpha = 0;
           gameState = 3;
           executeStateSwitch();
-        }
+          }
+
+        } 
       }
     }
   }
@@ -123,11 +127,12 @@ function game() {
     strokeWeight(2);
     stroke("#595959");
     rect(0, 600, 600, 100);
+    strokeWeight(0)
   }
   // scorebox drawing
   scoreBox();
   //ticking
-  speed += 1 / 800;
+  speed += 1 / 795;
   score += multiplier;
   gameTime += 1;
 }
@@ -172,7 +177,7 @@ function tutorial() {
     200
   );
   text(
-    "Powerups spawn during the game, giving abilities like slowing time, extra lives and point bonuses. Be careful through, as powerups with red outlines inflict negative effects.",
+    "Powerups spawn during the game, giving abilities like slowing time, extra lives and point bonuses. Be careful though, as powerups with red outlines inflict negative effects.",
     6,
     540,
     300,
@@ -191,7 +196,7 @@ function tutorial() {
   fill("blue");
   rect(50, 350, 150, 25);
   strokeWeight(2);
-  stroke("yellow");
+  stroke("gold");
   fill("white");
   ellipse(400, 600, 30);
   stroke("red");
@@ -286,7 +291,7 @@ function powerExecute() {
       // executes powerup effect
       switch (activePower.type) {
         case 1: // speed reduction
-          speed = speed / 1.25;
+          speed = speed / 1.20;
           break;
         case 2: // add 1 to multiplier
           multiplier += 1;
@@ -388,7 +393,6 @@ function keyPressed() {
 }
 
 // detects button clicks and sets apropriate gameState
-
 function mouseClicked() {
   if (gameState == 0) {
     if (playButton) {
@@ -453,6 +457,8 @@ function executeStateSwitch() {
       speed = 5;
       multiplier = 1;
       player.reinforce = false;
+      blindPlayer = false;
+      player.phase = "white"
     } else if (gameState == 4) {
       // pause effect
       fill("white");
@@ -465,7 +471,7 @@ function executeStateSwitch() {
       // set highScore and save to cookie
       if (highScore < score) {
         highScore = score;
-        storeItem('highScore', highScore)
+        storeItem("highScore", highScore);
       }
     }
   }
