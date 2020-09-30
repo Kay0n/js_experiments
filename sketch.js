@@ -291,7 +291,7 @@ function powerExecute() {
       // executes powerup effect
       switch (activePower.type) {
         case 1: // speed reduction
-          speed = speed / 1.20;
+          speed = speed / 1.18;
           break;
         case 2: // add 1 to multiplier
           multiplier += 1;
