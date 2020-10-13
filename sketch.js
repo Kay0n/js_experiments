@@ -1,43 +1,38 @@
+// Daniel Shiffman
+// Matter.js + p5.js Examples
+// This example is based on examples from: http://brm.io/matter-js/
 
 
-var pixelArray = []
+var Engine = Matter.Engine;
+var Render = Matter.Render;
+var World = Matter.World;
+var Bodies = Matter.Bodies;
+var Composite = Matter.Composite;
+
+var engine;
+
+var boxA;
+var boxB;
+var ground;
+
+function setup() {
+  createCanvas(800, 600);
+
+  // create an engine
+  engine = Engine.create();
+
+  // create two boxes and a ground
+  boxA = Bodies.rectangle(400, 200, 80, 80);
+  boxB = Bodies.rectangle(450, 50, 80, 80);
+	ground = Bodies.rectangle(400, 610, 810, 60, {isStatic: true});
+	circle = Bodies.circle(450, 100, 30);
 
 
+  // add all of the bodies to the world
+  World.add(engine.world, [boxA, boxB, ground, circle]);
 
-function setup(){
-  createCanvas(500,500)
-  player = new Player(100,0)
-  
-}
-
-function draw(){
-  background("grey")
-
-  for(var i = 0;i<pixelArray.length;i++){
-    pixelArray[i].render()
-  }
-  player.move()
-  player.display()
-  if(player.y > height){
-    player.y = 0
-  }
-  
-}
-
-
-function mouseClicked(){
-  var mX = floor(mouseX/25) * 25
-  var mY = floor(mouseY/25) * 25
-  var check = false
-  for(var i = 0;i<pixelArray.length;i++){
-    if (pixelArray[i].x == mX && pixelArray[i].y == mY){
-      check = true
-    }
-  }
-  if (check == false){
-    pixel = new Tile(mX,mY)
-    pixelArray.push(pixel)
-  }
+  // run the engine
+  Engine.run(engine);
 }
 
 
@@ -45,19 +40,27 @@ function mouseClicked(){
 
 
 
-function collideCheck(obj1,array,xD,yD){
-  var obj1X = obj1.x + xD
-  var obj1Y = obj1.y + yD
-  for(var i = 0;i<array.length;i++){
-    if(collideRectRect(obj1X,obj1Y,obj1.width,obj1.height,array[i].x,array[i].y,array[i].width,array[i].height)){
-      return true
-    }
-  }
-  return false
+function draw() {
+
+	background(51);
+	fill("red")
+	renderRect(boxA.vertices)
+	renderRect(boxB.vertices)
+	renderRect(ground.vertices)
+	renderCircle(circle)
 }
 
 
+function renderRect(obj){
+	beginShape();
+  for (var i = 0; i < obj.length; i++) {
+    vertex(obj[i].x, obj[i].y);
+  }
+  endShape();
 
+}
 
-
+function renderCircle(obj){
+	ellipse(obj.position.x, obj.position.y, obj.circleRadius * 2);
+}
 
