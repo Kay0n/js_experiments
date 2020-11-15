@@ -30,7 +30,7 @@ class SlingShot {
 				y: y
 			},
 			bodyB: body,
-			stiffness: 0.01,
+			stiffness: 0.02,
 			length: 0
 	  	};
 		this.sling = Constraint.create(this.options);
@@ -63,16 +63,18 @@ class SlingShot {
 
 
 class MatterMouse{
-	constructor(){
+	constructor(xOff,yOff){
 		const mouse = Mouse.create(canvas.elt);
-  		const options = {
+  		const mouseOptions = {
     		mouse: mouse,
     		collisionFilter : {
     			mask: 0x0002
     		}
-  		};
+		};
+		
+		Mouse.setOffset(mouse, { x: xOff, y: yOff })
   		mouse.pixelRatio = pixelDensity();
-  		this.self = MouseConstraint.create(engine, options);
+  		this.self = MouseConstraint.create(engine, mouseOptions);
   		World.add(engine.world, this.self);
 	}
 	remove(){

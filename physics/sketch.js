@@ -1,5 +1,5 @@
 
-const { Engine, World, Bodies, Mouse, MouseConstraint, Constraint, Composite } = Matter;
+const { Engine, World, Bodies, Mouse, MouseConstraint, Constraint, Composite, Events } = Matter;
 var worldObjects;
 
 var boxA;
@@ -28,32 +28,23 @@ function setup() {
 
   // create two boxes and ground
   boxA = addRect(400, 200, 80, 80);
-  boxB = addRect(450, 50, 80, 80);
+  boxB = addRect(400, 50, 80, 80);
   ground = addRect(400, 610, 20810, 60, {
     isStatic: true
   });
   player = new Player(200,400) 
   spring = new SlingShot(200,380,player.self)
   spring.attach(player.self)
-  MC = new MatterMouse()
+  MC = new MatterMouse(0,0)
 
-
-  /* Mouse Constraints
-  const mouse = Mouse.create(canvas.elt);
-  const options = {
-    mouse: mouse,
-    collisionFilter : {
-      mask: 0x0002
+  Events.on(engine, 'collisionStart', function(event) {
+    var pairs = event.pairs;
+    if (pairs[0].bodyA == ground && pairs[0].bodyB == player.self){
+      console.log("touchingGround")
     }
-  };
-  mouse.pixelRatio = pixelDensity();
-  mConstraint = MouseConstraint.create(engine, options);
-  World.add(engine.world, mConstraint);
-
-  */
-
-  
+  });
 }
+
 
 
 
@@ -127,6 +118,7 @@ function mouseReleased(){
   }, 100)
   player.self.collisionFilter.category = 0x0001
   
+  
 }
 
 
@@ -138,8 +130,12 @@ function screenMove(axis,dir){
   else{
     transX += 8 * dir
   }
-  
+  console.log("%c WARN: mouse no longer in sync with canvas", 'color:#426e00')
 }
+
+
+
+
 
 
 function keyPressed(){ // up
