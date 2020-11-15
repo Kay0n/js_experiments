@@ -233,6 +233,12 @@ function gameOver() {
   textAlign(LEFT);
 }
 
+
+//run this every tick
+playButton = textBG("Play Game", 300, 250, "white", "#444444", 30, 4);
+
+
+
 // in game UI
 function scoreBox() {
   // top box
@@ -389,6 +395,15 @@ function keyPressed() {
         }
       }
     }
+  }
+}
+
+
+
+// detects button clicks and runs code
+function mouseClicked() {
+  if (playButton) {
+    //code to run
   }
 }
 
